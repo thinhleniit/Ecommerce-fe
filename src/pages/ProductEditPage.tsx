@@ -51,7 +51,7 @@ export default function ProductEditPage() {
 
   const handleSubmit = () => {
     if (!name || !slug) {
-      alert("Name and Slug is required");
+      alert("Name and Slug are required");
       return;
     }
 
