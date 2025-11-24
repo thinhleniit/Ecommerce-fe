@@ -14,6 +14,8 @@ export default function ProductEditPage() {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("Active");
+  const [price, setPrice] = useState<number>(0);
+
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -30,6 +32,9 @@ export default function ProductEditPage() {
       setBrand(data.brand);
       setStatus(data.status);
       setDescription(data.description);
+
+      // Load price from existing variants
+      setPrice(data.variants?.[0]?.price || 0);
     }
   }, [data]);
 
@@ -56,7 +61,16 @@ export default function ProductEditPage() {
       brand,
       description,
       status,
-      variants: [],
+      variants: [
+        {
+          sku: slug + "-default",
+          name: "Default",
+          price: price,
+          currency: "USD",
+          isDefault: true,
+          imageUrl: data?.imageUrl || null,
+        },
+      ],
     };
 
     updateMutation.mutate(dto);
@@ -106,6 +120,15 @@ export default function ProductEditPage() {
           onChange={(e) => setDescription(e.target.value)}
         />
 
+        {/* PRICE */}
+        <input
+          type="number"
+          className="border p-3 w-full rounded"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(Number(e.target.value))}
+        />
+
         <select
           className="border p-3 w-full rounded"
           value={status}
@@ -116,7 +139,6 @@ export default function ProductEditPage() {
           <option value="Archived">Archived</option>
         </select>
 
-        {/* Current Image */}
         {data?.imageUrl && (
           <div>
             <p className="font-medium mb-2">Current Image</p>
@@ -127,7 +149,6 @@ export default function ProductEditPage() {
           </div>
         )}
 
-        {/* Upload New Image */}
         <div>
           <label className="block font-medium mb-2">Upload New Image</label>
 
@@ -139,17 +160,6 @@ export default function ProductEditPage() {
           )}
 
           <label className="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-              <polyline points="16 12 12 8 8 12" />
-              <line x1="12" y1="8" x2="12" y2="20" />
-            </svg>
             Choose Image
             <input
               type="file"
