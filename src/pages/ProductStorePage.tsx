@@ -33,50 +33,52 @@ export default function ProductStorePage() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {data.items.map((p: any) => {
-          const v = p.variants.find((v: any) => v.isDefault) || p.variants[0];
+        {data.items
+          .filter((p: any) => p.status !== "Archived")
+          .map((p: any) => {
+            const v = p.variants.find((v: any) => v.isDefault) || p.variants[0];
 
-          return (
-            <div key={p.id} className="bg-white shadow rounded-lg p-4 border">
-              <img
-                src={
-                  p.imageUrl
-                    ? `${apiRoot}${p.imageUrl}`
-                    : `https://placehold.co/300x200?text=${p.name}`
-                }
-                className="rounded mb-3 w-full h-44 object-contain bg-white"
-              />
-
-              <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
-              <p className="text-gray-400 text-sm">{p.brand}</p>
-
-              <p className="text-xl font-semibold mt-2">${v.price}</p>
-
-              <button
-                className="mt-3 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-                onClick={async () => {
-                  try {
-                    await productApi.addToCart(v.id, 1);
-
-                    // update UI local (optional)
-                    addToCart({
-                      productId: p.id,
-                      name: p.name,
-                      price: v.price,
-                      quantity: 1,
-                    });
-
-                    showToast();
-                  } catch (err) {
-                    console.error("Add to cart failed", err);
+            return (
+              <div key={p.id} className="bg-white shadow rounded-lg p-4 border">
+                <img
+                  src={
+                    p.imageUrl
+                      ? `${apiRoot}${p.imageUrl}`
+                      : `https://placehold.co/300x200?text=${p.name}`
                   }
-                }}
-              >
-                Add to Cart
-              </button>
-            </div>
-          );
-        })}
+                  className="rounded mb-3 w-full h-44 object-contain bg-white"
+                />
+
+                <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
+                <p className="text-gray-400 text-sm">{p.brand}</p>
+
+                <p className="text-xl font-semibold mt-2">${v.price}</p>
+
+                <button
+                  className="mt-3 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                  onClick={async () => {
+                    try {
+                      await productApi.addToCart(v.id, 1);
+
+                      // update UI local (optional)
+                      addToCart({
+                        productId: p.id,
+                        name: p.name,
+                        price: v.price,
+                        quantity: 1,
+                      });
+
+                      showToast();
+                    } catch (err) {
+                      console.error("Add to cart failed", err);
+                    }
+                  }}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
