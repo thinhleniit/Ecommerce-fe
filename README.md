@@ -71,3 +71,18 @@ export default defineConfig([
   },
 ])
 ```
+
+### Expanding the ESLint configuration
+
+After starting both FE & API:
+
+1. Open the login page  
+2. Use one of the following demo accounts:
+
+**Admin**
+- Email: `admin@test.com`
+- Password: `123456`
+
+**Staff**
+- Email: `staff@test.com`
+- Password: `123456`
